@@ -1,0 +1,6 @@
+FROM ollama/ollama:latest
+
+COPY ollama_bootstrap.sh /
+RUN chmod +x /ollama_boX strap.sh
+
+CMD ["/ollama_bootstrap.sh"]

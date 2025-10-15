@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+pydantic[email]
+sqlalchemy
+psycopg2-binary
+alembic
+redis
+httpx
+prometheus-fastapi-instrumentator
+python-jose[cryptography]
+passlib[bcrypt]
+python-multipart
+authlib
+gunicorn
+tiktoken
+openai

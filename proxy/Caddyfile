@@ -1,0 +1,9 @@
+{
+    acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
+    email admin@example.com
+}
+
+:443, :80 {
+    reverse_proxy /api/* api:8000
+    reverse_proxy /* frontend:3000
+}
