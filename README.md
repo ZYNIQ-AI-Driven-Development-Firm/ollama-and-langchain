@@ -1,2 +1,2 @@
-# ollama-and-langchain
+# zyniq-core-llm
 Just watch

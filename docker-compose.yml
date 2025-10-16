@@ -1,25 +1,11 @@
 version: '3.8'
 
 services:
-  proxy:
-    image: caddy:2-alpine
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./proxy/Caddyfile:/etc/caddy/Caddyfile
-      - caddy_data:/data
-      - caddy_config:/config
-    depends_on:
-      - api
-      - frontend
-    networks:
-      - internal
 
   api:
     build:
       context: ./api
+      dockerfile: Dockerfile.backend
     restart: unless-stopped
     environment:
       - POSTGRES_DSN=postgresql+psycopg://app:pass@db:5432/llm
@@ -44,6 +30,7 @@ services:
   frontend:
     build:
       context: ./frontend
+      dockerfile: Dockerfile.frontend
     restart: unless-stopped
     networks:
       - internal
