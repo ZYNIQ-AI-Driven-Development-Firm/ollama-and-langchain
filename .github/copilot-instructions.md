@@ -53,7 +53,11 @@ JWT_SECRET=supersecret          # Change in production!
 
 ## Deployment & Cloud Ready
 - **Docker**: Multi-stage builds for api/frontend, separate Ollama container with GPU support
-- **GCP Cloud Build**: `cloudbuild.yaml` builds Ollama image to GCR
+- **Local Build**: `docker build -f api/Dockerfile.backend -t ollama-api ./api` for each service
+- **GCP Cloud Build**: `cloudbuild.yaml` builds all 3 images (api, frontend, ollama) to GCR
+- **Quick Deploy**: `./build-and-deploy.sh PROJECT_ID` builds and pushes images to GCP
+- **Cloud Run**: Complete deployment guide in `deploy/gcp-cloud-run.md`
+- **Environment**: Use `.env.gcp` template for production configuration
 - **Monitoring Stack**: Prometheus + Grafana with persistent volumes
 - **Proxy**: Caddy handles routing `/api/*` to backend, `/*` to frontend with auto-HTTPS
 
