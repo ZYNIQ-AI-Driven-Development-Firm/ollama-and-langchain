@@ -1,27 +1,6 @@
 #!/bin/bash
 set -e
 
-echo "🚀 Setting up Complete Ollama & LangChain Stack on zyniq-llm-provider"
-echo "=================================================================="
-
-VM_NAME="zyniq-llm-provider"
-ZONE="us-central1-a"
-PROJECT_ID="zyniq-core"
-
-echo "🎯 VM Configuration:"
-echo "Name: $VM_NAME"
-echo "Type: n2d-standard-4 (4 vCPUs, 8GB RAM)"
-echo "Zone: $ZONE"
-echo ""
-
-# SSH into the VM and setup everything
-echo "🔧 Setting up the complete stack on your VM..."
-
-# Create setup script for the VM
-cat > vm-setup.sh << 'EOF'
-#!/bin/bash
-set -e
-
 echo "🔧 Installing dependencies on zyniq-llm-provider..."
 
 # Update system
@@ -37,7 +16,10 @@ sudo apt-get install -y \
   build-essential \
   python3-pip \
   nodejs \
-  npm
+  npm \
+  ca-certificates \
+  gnupg \
+  lsb-release
 
 # Start Docker
 sudo systemctl start docker
@@ -46,22 +28,37 @@ sudo systemctl enable docker
 # Add user to docker group
 sudo usermod -aG docker $USER
 
-# Install Docker Compose standalone
+# Install Docker Compose (latest version)
+echo "📦 Installing Docker Compose..."
 sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 
+# Create symlink for docker-compose command
+sudo ln -sf /usr/local/bin/docker-compose /usr/bin/docker-compose
+
+# Verify Docker Compose installation
+docker-compose --version
+
 # Install Ollama
+echo "🤖 Installing Ollama..."
 curl -fsSL https://ollama.ai/install.sh | sh
 sudo systemctl start ollama
 sudo systemctl enable ollama
 
 # Clone the repository
+echo "📥 Cloning repository..."
 cd /home/$USER
-git clone https://github.com/ZYNIQ-AI-Driven-Development-Firm/ollama-and-langchain.git
-cd ollama-and-langchain
+if [ -d "ollama-and-langchain" ]; then
+  cd ollama-and-langchain
+  git pull
+else
+  git clone https://github.com/ZYNIQ-AI-Driven-Development-Firm/ollama-and-langchain.git
+  cd ollama-and-langchain
+fi
 
 # Create environment file for VM deployment
-cat > .env << ENVEOF
+echo "⚙️ Creating environment configuration..."
+cat > .env << 'ENVEOF'
 # Database Configuration
 POSTGRES_USER=app
 POSTGRES_PASSWORD=secure_password_123
@@ -89,35 +86,44 @@ GRAFANA_ADMIN_USER=admin
 GRAFANA_ADMIN_PASSWORD=Zyniq@1234567
 ENVEOF
 
-# Build Docker images
-echo "🔨 Building Docker images..."
-sudo docker build -f api/Dockerfile.backend -t ollama-api:latest ./api
-sudo docker build -f frontend/Dockerfile.frontend -t ollama-frontend:latest ./frontend
-
-# Pull models first (to avoid timeout during startup)
+# Pre-download Ollama models (to avoid Docker timeout)
 echo "🤖 Pre-downloading Ollama models..."
 ollama pull jimscard/whiterabbit-neo &
 ollama pull thirty3/kali &
 ollama pull qwen2.5-coder:7b &
 ollama pull nomic-embed-text &
 
-# Wait for some models to finish
+# Build Docker images while models download
+echo "🔨 Building Docker images..."
+sudo docker build -f api/Dockerfile.backend -t ollama-api:latest ./api &
+sudo docker build -f frontend/Dockerfile.frontend -t ollama-frontend:latest ./frontend &
+
+# Wait for model downloads and builds to complete
+echo "⏳ Waiting for models and builds to complete..."
 wait
 
-# Start services
+# Start services with new docker group (need to re-login for group to take effect)
 echo "🚀 Starting complete stack..."
-sudo docker-compose up -d
+newgrp docker << 'DOCKEREOF'
+docker-compose up -d
+DOCKEREOF
+
+# Alternative: use sudo if newgrp doesn't work
+if [ $? -ne 0 ]; then
+  echo "🔄 Fallback: Using sudo for docker-compose..."
+  sudo docker-compose up -d
+fi
 
 # Wait for services to be healthy
 echo "⏳ Waiting for services to start..."
-sleep 60
+sleep 90
 
 # Check service status
 echo "📊 Service Status:"
 sudo docker-compose ps
 
 # Get external IP
-EXTERNAL_IP=$(curl -s http://checkip.amazonaws.com)
+EXTERNAL_IP=$(curl -s http://checkip.amazonaws.com || curl -s http://ipinfo.io/ip || echo "localhost")
 
 echo ""
 echo "🎉 Complete Stack Deployed Successfully!"
@@ -135,34 +141,13 @@ echo "  -H 'Content-Type: application/json' \\"
 echo "  -d '{\"model\": \"jimscard/whiterabbit-neo\", \"prompt\": \"Hello! Write a Python function\", \"stream\": false}'"
 echo ""
 echo "🛠️ Management Commands:"
-echo "sudo docker-compose logs -f           # View logs"
-echo "sudo docker-compose restart          # Restart services"
-echo "sudo docker-compose down             # Stop services"
-echo "sudo docker-compose up -d            # Start services"
+echo "docker-compose logs -f           # View logs"
+echo "docker-compose restart          # Restart services"
+echo "docker-compose down             # Stop services"
+echo "docker-compose up -d            # Start services"
+echo ""
+echo "📝 Notes:"
+echo "- You may need to logout and login again for docker group permissions"
+echo "- If docker commands need sudo, the setup will handle it automatically"
 echo ""
 echo "✅ Setup complete!"
-EOF
-
-# Make the setup script executable
-chmod +x vm-setup.sh
-
-echo "📋 Next steps:"
-echo ""
-echo "1. SSH into your VM:"
-echo "   gcloud compute ssh $VM_NAME --zone=$ZONE"
-echo ""
-echo "2. Copy and run the setup script on your VM:"
-echo "   # First, upload this script to your VM"
-echo "   gcloud compute scp vm-setup.sh $VM_NAME:~/vm-setup.sh --zone=$ZONE"
-echo ""
-echo "3. Then SSH in and run it:"
-echo "   gcloud compute ssh $VM_NAME --zone=$ZONE"
-echo "   chmod +x ~/vm-setup.sh"
-echo "   ./vm-setup.sh"
-echo ""
-echo "🚀 Or run everything in one command:"
-echo "gcloud compute scp vm-setup.sh $VM_NAME:~/vm-setup.sh --zone=$ZONE && \\"
-echo "gcloud compute ssh $VM_NAME --zone=$ZONE --command='chmod +x ~/vm-setup.sh && ./vm-setup.sh'"
-echo ""
-echo "⏰ Total setup time: ~15-20 minutes"
-echo "🎯 Your VM will have the complete Ollama & LangChain stack running!"
