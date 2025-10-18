@@ -11,6 +11,11 @@ RUN chmod +x /usr/local/bin/ollama_bootstrap.sh
 # Create data directory
 RUN mkdir -p /root/.ollama
 
+# Pre-pull a lightweight model for faster startup
+RUN ollama serve & sleep 5 && \
+    ollama pull llama3.1:8b-instruct && \
+    pkill ollama
+
 # Health check
 HEALTHCHECK --interval=60s --timeout=30s --start-period=180s --retries=3 \
     CMD curl -f http://localhost:11434/api/ps || exit 1
