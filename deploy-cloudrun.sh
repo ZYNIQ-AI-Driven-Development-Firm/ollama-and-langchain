@@ -20,7 +20,7 @@ FROM ollama/ollama:latest
 
 # Pre-download models
 RUN ollama serve & sleep 5 && \
-    ollama pull llama3.1:8b-instruct && \
+    ollama pull jimscard/whiterabbit-neo && \
     ollama pull qwen2.5-coder:7b && \
     ollama pull nomic-embed-text && \
     pkill ollama
@@ -62,13 +62,13 @@ echo ""
 echo "🧪 Test commands:"
 echo "curl -X POST \"$SERVICE_URL/api/generate\" \\"
 echo "  -H 'Content-Type: application/json' \\"
-echo "  -d '{\"model\": \"llama3.1:8b-instruct\", \"prompt\": \"Write a hello world in Python\", \"stream\": false}'"
+echo "  -d '{\"model\": \"jimscard/whiterabbit-neo\", \"prompt\": \"Write a hello world in Python\", \"stream\": false}'"
 echo ""
 echo "📖 Available models:"
 echo "curl \"$SERVICE_URL/api/tags\""
 echo ""
 echo "💡 Models included:"
-echo "- llama3.1:8b-instruct (great for coding & conversation)"
+echo "- jimscard/whiterabbit-neo (great for coding & conversation)"
 echo "- qwen2.5-coder:7b (excellent for coding)"
 echo "- nomic-embed-text (for embeddings)"
 echo ""

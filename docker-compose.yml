@@ -7,6 +7,8 @@ services:
       context: ./api
       dockerfile: Dockerfile.backend
     restart: unless-stopped
+    ports:
+      - "8000:8000"
     environment:
       - POSTGRES_DSN=postgresql+psycopg://app:pass@db:5432/llm
       - REDIS_URL=redis://redis:6379/0
@@ -24,6 +26,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+      ollama:
+        condition: service_healthy
     networks:
       - internal
 
@@ -32,6 +36,12 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.frontend
     restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    depends_on:
+      - api
     networks:
       - internal
 
@@ -40,6 +50,8 @@ services:
       context: .
       dockerfile: Dockerfile.ollama
     restart: unless-stopped
+    ports:
+      - "11434:11434"
     volumes:
       - ollama_data:/root/.ollama
     # Uncomment for GPU support
@@ -51,11 +63,11 @@ services:
     #           count: 1
     #           capabilities: [gpu]
     environment:
-      - OLLAMA_MODELS=${OLLAMA_MODELS}
+      - OLLAMA_MODELS=${OLLAMA_MODELS:-jimscard/whiterabbit-neo,thirty3/kali,qwen2.5-coder:7b,nomic-embed-text}
     networks:
       - internal
     healthcheck:
-      test: ["CMD", "ollama", "ps"]
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -91,6 +103,8 @@ services:
   prometheus:
     image: prom/prometheus:v2.47.2
     restart: unless-stopped
+    ports:
+      - "9090:9090"
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
       - prom_data:/prometheus
@@ -106,7 +120,7 @@ services:
     image: grafana/grafana:10.2.0
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "3001:3000"
     volumes:
       - grafana_data:/var/lib/grafana
       - ./grafana/provisioning:/etc/grafana/provisioning

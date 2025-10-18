@@ -85,7 +85,7 @@ gcloud run deploy ollama \
     --max-instances=3 \
     --gpu=1 \
     --gpu-type=nvidia-l4 \
-    --set-env-vars="OLLAMA_MODELS=llama3.1:8b-instruct"
+    --set-env-vars="OLLAMA_MODELS=jimscard/whiterabbit-neo,thirty3/kali"
 ```
 
 ## Environment Variables
@@ -101,7 +101,7 @@ REDIS_URL=redis://REDIS_IP:6379/0
 
 # Ollama
 OLLAMA_BASE_URL=https://ollama-SERVICE_URL
-OLLAMA_MODELS=llama3.1:8b-instruct,qwen2.5:32b-instruct
+OLLAMA_MODELS=jimscard/whiterabbit-neo,thirty3/kali,qwen2.5:32b-instruct
 
 # Security
 JWT_SECRET=your-super-secure-jwt-secret

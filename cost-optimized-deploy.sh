@@ -51,7 +51,7 @@ systemctl start ollama
 systemctl enable ollama
 
 # Pull efficient models
-ollama pull llama3.1:8b-instruct
+ollama pull jimscard/whiterabbit-neo
 ollama pull qwen2.5-coder:7b
 ollama pull nomic-embed-text
 
@@ -81,7 +81,7 @@ echo ""
 echo "🛠️ Test commands:"
 echo "curl -X POST http://$VM_IP:11434/api/generate \\"
 echo "  -H 'Content-Type: application/json' \\"
-echo "  -d '{\"model\": \"llama3.1:8b-instruct\", \"prompt\": \"Hello!\", \"stream\": false}'"
+echo "  -d '{\"model\": \"jimscard/whiterabbit-neo\", \"prompt\": \"Hello!\", \"stream\": false}'"
 echo ""
 echo "🛑 To stop VM: gcloud compute instances stop ollama-gpu --zone=$ZONE"
 echo "🔄 To restart: gcloud compute instances start ollama-gpu --zone=$ZONE"

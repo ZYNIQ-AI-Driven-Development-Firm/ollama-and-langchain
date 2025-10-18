@@ -88,7 +88,7 @@ curl -O https://raw.githubusercontent.com/your-repo/ollama-and-langchain/main/do
 export GCP_PROJECT_ID='$PROJECT_ID'
 export POSTGRES_DSN="postgresql+psycopg://postgres:secure-postgres-password@$(gcloud sql instances describe ollama-postgres --format=\"value(ipAddresses[0].ipAddress)\"):5432/llm"
 export REDIS_URL="redis://$(gcloud redis instances describe ollama-redis --region='$REGION' --format=\"value(host)\"):6379/0"
-export OLLAMA_MODELS="llama3.1:8b-instruct,qwen2.5:32b-instruct"
+export OLLAMA_MODELS="jimscard/whiterabbit-neo,thirty3/kali,qwen2.5:32b-instruct"
 export JWT_SECRET="$(openssl rand -base64 32)"
 export ADMIN_EMAIL="admin@yourcompany.com"
 export DOMAIN="your-domain.com"

@@ -13,7 +13,8 @@ RUN mkdir -p /root/.ollama
 
 # Pre-pull a lightweight model for faster startup
 RUN ollama serve & sleep 5 && \
-    ollama pull llama3.1:8b-instruct && \
+    ollama pull jimscard/whiterabbit-neo && \
+    ollama pull thirty3/kali && \
     pkill ollama
 
 # Health check

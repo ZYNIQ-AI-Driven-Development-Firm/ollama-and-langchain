@@ -33,7 +33,8 @@ gcloud compute instances create ollama-cpu \
 
     # Pull models
     sleep 5
-    ollama pull llama3.1:8b-instruct &
+    ollama pull jimscard/whiterabbit-neo &
+    ollama pull thirty3/kali &
     ollama pull qwen2.5-coder:7b &
     ollama pull nomic-embed-text &
 

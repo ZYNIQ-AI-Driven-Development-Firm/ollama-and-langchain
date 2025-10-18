@@ -31,11 +31,12 @@ echo "⏳ Waiting for Ollama to start..."
 sleep 10
 
 # Pull a good coding and conversation model
-echo "🤖 Pulling Llama 3.1 8B Instruct model (great for coding & conversation)..."
-docker exec ollama ollama pull llama3.1:8b-instruct
+echo "🤖 Pulling WhiteRabbit Neo model (great for coding & conversation)..."
+docker exec ollama ollama pull jimscard/whiterabbit-neo
 
 # Optional: Pull additional models
 echo "📚 Pulling additional useful models..."
+docker exec ollama ollama pull thirty3/kali &
 docker exec ollama ollama pull qwen2.5-coder:7b &
 docker exec ollama ollama pull nomic-embed-text &
 
@@ -51,7 +52,7 @@ echo "🧪 Testing Ollama installation..."
 echo "Testing basic API..."
 curl -X POST http://localhost:11434/api/generate \
   -H "Content-Type: application/json" \
-  -d '{"model": "llama3.1:8b-instruct", "prompt": "Hello! Can you help me with coding?", "stream": false}' \
+  -d '{"model": "jimscard/whiterabbit-neo", "prompt": "Hello! Can you help me with coding?", "stream": false}' \
   | jq -r '.response' 2>/dev/null || echo "Response received (jq not available)"
 
 echo ""
@@ -65,7 +66,7 @@ echo "📖 Available models:"
 curl -s http://localhost:11434/api/tags | jq -r '.models[].name' 2>/dev/null || echo "Install jq to see model list"
 echo ""
 echo "🛠️  Usage examples:"
-echo "curl -X POST http://localhost:11434/api/generate -H 'Content-Type: application/json' -d '{\"model\": \"llama3.1:8b-instruct\", \"prompt\": \"Write a Python function to calculate fibonacci\", \"stream\": false}'"
+echo "curl -X POST http://localhost:11434/api/generate -H 'Content-Type: application/json' -d '{\"model\": \"jimscard/whiterabbit-neo\", \"prompt\": \"Write a Python function to reverse a string\", \"stream\": false}'"
 echo ""
 echo "🛑 To stop: docker stop ollama"
 echo "🔄 To restart: docker start ollama"

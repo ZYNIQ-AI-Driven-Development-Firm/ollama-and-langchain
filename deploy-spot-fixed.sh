@@ -38,7 +38,7 @@ gcloud compute instances create-with-container ollama-spot \
     sleep 10
 
     # Pull models in background
-    docker exec $(docker ps -q) ollama pull llama3.1:8b-instruct &
+    docker exec $(docker ps -q) ollama pull jimscard/whiterabbit-neo &
     docker exec $(docker ps -q) ollama pull qwen2.5-coder:7b &
     docker exec $(docker ps -q) ollama pull nomic-embed-text &
   '
@@ -60,7 +60,7 @@ echo ""
 echo "🧪 Test Ollama:"
 echo "curl -X POST http://$VM_IP:11434/api/generate \\"
 echo "  -H 'Content-Type: application/json' \\"
-echo "  -d '{\"model\": \"llama3.1:8b-instruct\", \"prompt\": \"Hello!\", \"stream\": false}'"
+echo "  -d '{\"model\": \"jimscard/whiterabbit-neo\", \"prompt\": \"Hello!\", \"stream\": false}'"
 echo ""
 echo "💰 Cost: ~\$0.15-0.30/hour (Spot pricing)"
 echo "🛑 To stop: gcloud compute instances delete ollama-spot --zone=us-central1-a"

@@ -18,7 +18,7 @@ FROM ollama/ollama:latest
 
 # Pre-download CPU-efficient models
 RUN ollama serve & sleep 5 && \
-    ollama pull llama3.1:8b-instruct && \
+    ollama pull jimscard/whiterabbit-neo && \
     ollama pull qwen2.5-coder:7b && \
     ollama pull phi3:14b && \
     ollama pull nomic-embed-text && \
@@ -62,7 +62,7 @@ echo ""
 echo "# Test Llama 3.1"
 echo "curl -X POST \"$SERVICE_URL/api/generate\" \\"
 echo "  -H 'Content-Type: application/json' \\"
-echo "  -d '{\"model\": \"llama3.1:8b-instruct\", \"prompt\": \"Explain recursion in simple terms\", \"stream\": false}'"
+echo "  -d '{\"model\": \"jimscard/whiterabbit-neo\", \"prompt\": \"Explain recursion in simple terms\", \"stream\": false}'"
 echo ""
 echo "# Test Qwen2.5 Coder"
 echo "curl -X POST \"$SERVICE_URL/api/generate\" \\"

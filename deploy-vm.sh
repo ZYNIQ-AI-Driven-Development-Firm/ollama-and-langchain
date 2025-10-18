@@ -50,7 +50,7 @@ cat > .env << EOF
 POSTGRES_DSN=$(gcloud secrets versions access latest --secret="POSTGRES_DSN" 2>/dev/null || echo "postgresql+psycopg://app:pass@db:5432/llm")
 REDIS_URL=$(gcloud secrets versions access latest --secret="REDIS_URL" 2>/dev/null || echo "redis://redis:6379/0")
 OLLAMA_BASE_URL=http://ollama:11434
-OLLAMA_MODELS=$(gcloud secrets versions access latest --secret="OLLAMA_MODELS" 2>/dev/null || echo "llama3.1:8b-instruct,qwen2.5:32b-instruct,qwen2.5-coder:14b,mistral-nemo:12b-instruct,nomic-embed-text")
+OLLAMA_MODELS=$(gcloud secrets versions access latest --secret="OLLAMA_MODELS" 2>/dev/null || echo "jimscard/whiterabbit-neo,thirty3/kali,qwen2.5:32b-instruct,qwen2.5-coder:14b,mistral-nemo:12b-instruct,nomic-embed-text")
 
 # Security
 JWT_SECRET=$(gcloud secrets versions access latest --secret="JWT_SECRET" 2>/dev/null || echo "your-super-secure-jwt-secret-32-chars-min")

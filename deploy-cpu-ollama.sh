@@ -41,7 +41,8 @@ gcloud compute instances create ollama-cpu \
 
     # Pull efficient CPU-optimized models
     echo "🤖 Pulling CPU-optimized models..."
-    ollama pull llama3.1:8b-instruct      # Excellent for coding & conversation
+    ollama pull jimscard/whiterabbit-neo      # Excellent for coding & conversation
+    ollama pull thirty3/kali                  # Additional model for specific tasks
     ollama pull qwen2.5-coder:7b          # Great for programming
     ollama pull phi3:14b                  # Fast and capable
     ollama pull nomic-embed-text          # For embeddings
@@ -68,10 +69,10 @@ echo "💰 Cost: ~\$0.30/hour (much cheaper than GPU!)"
 echo ""
 echo "🧪 Test your models:"
 echo ""
-echo "# Test Llama 3.1 (best for coding & conversation)"
+echo "# Test WhiteRabbit Neo (best for coding & conversation)"
 echo "curl -X POST http://$VM_IP:11434/api/generate \\"
 echo "  -H \"Content-Type: application/json\" \\"
-echo "  -d '\''{\"model\": \"llama3.1:8b-instruct\", \"prompt\": \"Write a Python function to calculate fibonacci\", \"stream\": false}'\''"
+echo "  -d '\''{\"model\": \"jimscard/whiterabbit-neo\", \"prompt\": \"Write a Python function to calculate fibonacci\", \"stream\": false}'\''"
 echo ""
 echo "# Test Qwen2.5 Coder (excellent for programming)"
 echo "curl -X POST http://$VM_IP:11434/api/generate \\"
